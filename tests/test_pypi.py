@@ -808,6 +808,15 @@ def test_extract_issues_url_github_fallback():
         == "https://github.com/org/repo/issues"
     )
     assert pypi.extract_issues_url(None, homepage="https://github.com/org/repo") == "https://github.com/org/repo/issues"
+    assert (
+        pypi.extract_issues_url({"Source": "https://github.com/org/repo/tree/main/docs"})
+        == "https://github.com/org/repo/issues"
+    )
+
+
+@pytest.mark.parametrize("path", ["sponsors/someone", "orgs/pallets/projects"])
+def test_extract_issues_url_skips_github_reserved_paths(path):
+    assert pypi.extract_issues_url(None, homepage=f"https://github.com/{path}") is None
 
 
 def test_extract_issues_url_refuses_control_characters():
