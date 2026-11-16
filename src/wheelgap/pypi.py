@@ -317,6 +317,14 @@ _GITHUB_RESERVED_PATHS = frozenset(
         "site",
         "sponsors",
         "topics",
+        "users",
+        "enterprise",
+        "security",
+        "trending",
+        "readme",
+        "contact",
+        "join",
+        "signup",
     }
 )
 _LABEL_DROP = str.maketrans("", "", string.punctuation + string.whitespace)
