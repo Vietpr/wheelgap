@@ -616,7 +616,7 @@ def _check_lockfile(args: dict[str, Any]) -> dict[str, Any]:
     environment = _string(args, "environment")
     path = _existing(raw)
     # --name=value forms, and -- before the path, so no value can be read as another option.
-    argv = ["--json"]
+    argv = ["--json", "--color=never"]
     if environment is not None:
         argv.append(f"--environment={environment}")
     argv += [f"--python={p}" for p in _pythons(args)]
@@ -655,7 +655,7 @@ def _check_dockerfile(args: dict[str, Any]) -> dict[str, Any]:
         raise ToolError(message) from e
     except OSError as e:  # a Dockerfile that can't be read
         raise ToolError(f"{args['dockerfile']}: {e.strerror or e}") from e
-    argv = ["--json", f"--dockerfile={dockerfile}"]
+    argv = ["--json", "--color=never", f"--dockerfile={dockerfile}"]
     argv += [f"--build-arg={name}={value}" for name, value in build_args.items()]
     argv += [f"--target={p}" for p in _platforms(args)]
     try:

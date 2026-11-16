@@ -751,6 +751,26 @@ def test_check_lockfile_passes_on_notes(fake_pypi, fixtures):
     assert not fake_pypi
 
 
+@pytest.mark.parametrize("tool", ["check_lockfile", "check_dockerfile"])
+def test_lockfile_tools_disable_cli_color(monkeypatch, tmp_path, tool):
+    requirements = tmp_path / "requirements.txt"
+    requirements.write_text("packaging==26.0\n", encoding="utf-8")
+    dockerfile = tmp_path / "Dockerfile"
+    dockerfile.write_text("FROM python:3.14-slim\n", encoding="utf-8")
+    seen = []
+
+    def run_cli(argv, path):
+        seen.extend(argv)
+        return {"notes": []}
+
+    monkeypatch.setattr(mcp, "_run_cli", run_cli)
+    arguments = {"path": str(requirements)} if tool == "check_lockfile" else {"dockerfile": str(dockerfile)}
+
+    getattr(mcp, f"_{tool}")(arguments)
+
+    assert "--color=never" in seen
+
+
 def test_check_lockfile_explicit_python_beats_python_version_file(fake_pypi, tmp_path, fixtures):
     (tmp_path / "uv.lock").write_bytes((fixtures / "uvproj" / "uv.lock").read_bytes())
     (tmp_path / ".python-version").write_text("3.12\n", encoding="utf-8")
